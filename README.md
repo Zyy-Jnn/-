@@ -1,2 +1,120 @@
-# -
-使用服务器运行 MATLAB 程序时的流程以及命令
+# 使用服务器运行 MATLAB 程序时的流程以及命令
+
+## 把代码从个人电脑上传到服务器
+#### Step1. 打开 Ubuntu，显示 zyy@Zyy:~$ ，挂载目录，输入：
+```
+cd /mnt/
+
+cd d
+```
+> 注意不是在 kunlun 里，要是进入了 kunlun，就先退出 kunlun，输入
+> ```
+> exit
+> ```
+> 显示 zyy@Zyy:~$ ，再按上述挂载目录
+
+#### Step2. 上传文件到服务器
+```
+scp -v "./Users/zhouy/MATLAB Drive/PGA/Step5.m" host_kunlun:"/home/zhouyushan/code/"
+```
+> 这里路径可以有空格，但好像从服务器下载文件到本地时，路径就不可以有空格了？
+> 
+<div  align="center">  
+<img width="70%" height="70%" alt="image" src="https://github.com/user-attachments/assets/16e25a32-64a8-403f-87df-d47ab8eea214" />
+</div>
+
+## 创建 screen 会话
+####  1.  进入服务器：
+```
+kunlun
+```
+
+####  2.  创建 screen 会话
+每个 screen 名字要不同。（在 kunlun 里输入→　zhouyushan@kunlun:~$　）
+```
+screen -S otherScreen_zys
+```
+> screen 是终端复用工具，允许你在一个 SSH 会话中创建多个“虚拟终端”，即使断开连接，任务也能继续运行。
+> 
+> -S otherScreen_zys 是给这个 screen 会话起个名字，叫 otherScreen_zys，方便你之后重新连接它。
+> 
+> 输入命令之后，会进入一个全新的界面
+
+<div  align="center">  
+<img width="40%" height="40%" alt="image" src="https://github.com/user-attachments/assets/8edd852b-d3d7-445d-8a0b-85c37ed10f5b" />
+</div>
+
+####  3.  后台运行
+在　screen 会话里（比如正在跑 MATLAB） 
+
+**`按Ctrl+A 松手，再按 D 键`**
+
+> 临时离开，退出但不终止任务：detach　当前 screen 会话，但里面的程序（比如 MATLAB）继续运行。就像最小化了一个窗口，程序还在后台跑，只是看不到它。
+
+####  4.  查看 screen 会话
+```
+screen -ls
+```
+
+<div  align="center">  
+<img width="50%" height="50%" alt="image" src="https://github.com/user-attachments/assets/b76ca602-8d58-4918-8648-b750c57753bc" />
+</div>
+
+####  5.  重新进入
+如果之前已经创建过 screen 了，并且还挂在后台
+```
+screen -r otherScreen_zys
+```
+
+####  6. 删除 screen 会话：
+- 可以 在 screen 会话里直接输入：
+  ```
+  exit
+  ```
+  > 则会直接关掉并删除当前的 screen 会话。
+
+- 也可以 离开了 screen 会话，在 原本的 kunlun 里输入：
+  ```
+  screen -S otherScreen_zys -X quit
+  ```
+  > -X quit ：会直接终止会话，未保存的进程数据会丢失。
+
+  
+<ins>注意若在 screen 会话　里长时间没反应，Ubuntu会自动退出kunlun，回到我的账号下面，显示 zyy@Zyy:~$ 。要重新进入 kunlun。 </ins>
+
+
+## 调用他人 MATLAB
+在 screen 会话里，看看有没有 MATLAB。输入 ：
+```
+matlab
+```
+> 有的话就直接进入了。没有的话，会显示 matlab: command not found，那就调用他人的 MATLAB。我没有在服务器安装 MATLAB，需要从师弟那边调用。
+
+#### 调用 MATLAB：
+```
+alias matlab='/home/qinsongyu/MATLAB/bin/matlab'
+
+source ~/ .bashrc
+```
+> 配置好了，貌似理论上以后进入 kunlun 可以直接用。如果不行就重新配置一遍。（我每次打开 Ubuntu 都得重新配置）
+
+<div  align="center"> 
+<img width="55%" height="55%" alt="image" src="https://github.com/user-attachments/assets/37251cee-76a2-4d30-b7e7-83fdd7108fce" />
+</div>
+
+## 运行程序
+进入 screen 会话后，可以在 MATLAB 里输入指令，也可以在 kunlun 里输入指令。
+
+#### 0. 进入自己选择过的 存代码的目录 ，也可以不进入文件夹，直接运行程序。
+```
+cd ~/code
+```
+#### 1. 运行程序 Step5.m
+```
+matlab -nodisplay -nosplash -nodesktop -r "Step5; exit;"
+```
+> 在服务器运行程序，是不会弹出 figure 图窗的。所以需要在程序里写上保存数据的代码，保存在服务器的文件夹，再用 修图 软件打开查看。
+
+
+
+
